@@ -1,0 +1,86 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>AWIN AG</title>
+<link href="./global.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+
+
+	<div>
+		<form method="POST" enctype="multipart/form-data" action="/rest/upload/cv">
+		<div id="main_container">
+   
+    <div id="main_content">
+    Note: All fields are compulsory!<br/>
+    <table>
+    <tr>
+    <td>
+    <table class="table">
+            <tbody>
+            <tr>
+                <td>File</td>
+                <td><input type="file" name="file" required="required"/></td>
+            </tr>
+            <tr>
+                <td>First Name</td>
+                <td><input name="firstname" type="text" required="required" /></td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td><input name="lastname" type="text" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><input name="email" type="text" required="required"/></td>
+            </tr>
+            <tr>
+                <td>Job Title</td>
+                <td><input name="jobtitle" type="text" required="required" /></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td><input name="source" type="text" required="required" /></td>
+            </tr>
+            <tr>
+            <td colspan="2">
+            <input type="submit" value="SUBMIT" />
+            </td>
+            </tr>
+            </tbody>
+        </table>
+    </td>
+    <td>
+    <div th:if="${messages}">
+	<ul style="list-style-type:none">
+	<li th:each="message : ${messages}">
+				<p th:text="${message}"/>
+	</li>
+	</ul>
+	</div>
+    </td>
+    </tr>
+    </table>
+        
+    </div>
+    <p style="margin-bottom:25px;"></p>
+    <div id="footer">
+        <div style="margin-right:25px">&copy; AWIN AG - 2017</div>
+    </div>
+</div>
+			
+		</form>
+	</div>
+	
+	
+	
+Please click the link to download a file:
+	<div>
+		<ul>
+			<li th:each="file : ${files}">
+				<a th:href="${file}" th:text="${file}" />
+			</li>
+		</ul>
+	</div>
+
+</body>
+</html>
