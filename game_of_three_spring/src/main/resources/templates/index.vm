@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>GAME OF THREE</title>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td colspan="2"><input type="submit" value="Start Game" id="startGame"></td>
+		</tr>
+		<tr>
+			<td><label for="playerId">Player</label></td>
+			<td><input type="text" name="playerId" id="playerId" readonly></td>
+			
+		</tr>
+		<tr>
+			<td><label for="number">Number</label> </td>
+			<td><input type="text" name="number" id="number" ></td>
+			
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" value="Send Number" id="sendNumber"></td>
+		</tr>
+	</table>
+
+	<label for="result">Moves:</label> 
+	<p id="result"></p>
+	
+<script type="text/javascript">
+
+$("#startGame").click(function(event) {
+	$("#result").empty();
+
+    $.post('/game/player').done(function(data) {
+  		$("#playerId").val(data.playerId);
+  		
+  		if(data.playerId=='P1'){var number=Math.floor(Math.random()*100);
+  		$("#number").val(number);}
+		var source = new EventSource('/game/' + data.playerId);  
+		source.onmessage = function(event) {
+			var move = $.parseJSON(event.data);
+			$("#result").append('Player: ' + move.player + ', Number: ' + move.number + ', Next number: ' + move.nextNumber + ', Added: ' + move.added);
+			$("#result").append('<br/>');
+
+			if (!move.gameFinished && move.player != data.playerId) {
+				sendNumber(move.nextNumber);
+				
+			}
+			if (move.gameFinished) {
+				$("#result").append('Game over!<br/>');
+				source.close();
+			}
+		};
+	});
+});
+  	
+$("#sendNumber").click(function(event) {
+	var player = $("#playerId").val();
+	var number = $("#number").val();
+	if (player == '') {
+		$("#result").append('Invalid move... Start the game first! <br/>');
+	} else if (number == '') {
+		$("#result").append('Invalid move... Insert a number to send! <br/>');
+	} else {
+		sendNumber(number);
+	}
+	
+});
+
+function sendNumber(nextNumber) {
+	var t2 = $("#playerId").val();
+	$.post('/playGame/sendNumber', { playerId: t2, number: nextNumber})
+	.done(function(data) {
+		if (data != '') {
+			var error = $.parseJSON(data);
+			$("#result").append(error.errorMessage + '<br/>');
+		}
+	});
+}
+</script>
+</body>
+</html>
